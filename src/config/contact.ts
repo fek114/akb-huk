@@ -21,6 +21,11 @@ export const contactChannels = {
       'Uyuşmazlık, dava veya icra takibi',
     ],
   },
+  /** Sağ alt köşedeki ön bilgilendirme asistanı (Workers AI, /api/asistan) */
+  asistan: {
+    enabled: true,
+    suggestions: ['Çalışma alanlarınız neler?', 'İlk görüşme nasıl işliyor?', 'Ücretler nasıl belirleniyor?'],
+  },
   calcom: {
     enabled: false,
     /** Örn. 'akbulut-hukuk/on-gorusme' */

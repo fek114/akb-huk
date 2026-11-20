@@ -1,0 +1,236 @@
+---
+/**
+ * Ön bilgilendirme asistanı — sohbet paneli.
+ * Mesajlar yalnızca sayfa açıkken bellekte tutulur; hiçbir yerde saklanmaz.
+ * Sunucu tarafı: worker/index.ts (POST /api/asistan).
+ */
+import { contactChannels } from '../config/contact';
+const { suggestions } = contactChannels.asistan;
+---
+
+<div class="asistan pointer-events-auto flex w-full flex-col items-end sm:w-auto" data-asistan>
+  <section
+    id="asistan-panel"
+    class="hidden h-[min(600px,calc(100svh-5rem))] w-full flex-col border-t border-ink bg-bone sm:mb-3 sm:w-[400px] sm:border"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="asistan-baslik"
+    data-panel
+  >
+    <header class="flex items-start justify-between gap-4 border-b border-rule px-5 py-4">
+      <div>
+        <h2 id="asistan-baslik" class="font-serif text-xl leading-tight">Ön bilgilendirme</h2>
+        <p class="mt-1 text-xs text-slate">Genel bilgi verir; hukuki görüş yerine geçmez.</p>
+      </div>
+      <button type="button" class="-mr-1 p-1 text-sm text-slate hover:text-ink" data-close aria-label="Asistanı kapat">
+        Kapat
+      </button>
+    </header>
+
+    <div class="flex-1 space-y-4 overflow-y-auto px-5 py-5 text-[0.9375rem] leading-relaxed" data-log aria-live="polite">
+      <div class="msg-bot">
+        Merhaba. Büromuzun çalışma alanları, görüşme süreci ve iletişim kanalları hakkında bilgi verebilirim. Konunuzu
+        kısaca yazabilirsiniz.
+      </div>
+      <div class="flex flex-wrap gap-2" data-suggestions>
+        {
+          suggestions.map((s) => (
+            <button
+              type="button"
+              class="border border-rule bg-paper px-3 py-2 text-left text-sm text-ink transition-colors duration-150 hover:border-ink"
+              data-suggestion
+            >
+              {s}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <form class="border-t border-rule px-5 py-4" data-form>
+      <label for="asistan-girdi" class="sr-only">Mesajınız</label>
+      <div class="flex items-end gap-3">
+        <textarea
+          id="asistan-girdi"
+          rows="2"
+          maxlength="1200"
+          placeholder="Konunuzu kısaca yazın"
+          class="min-h-[2.75rem] flex-1 resize-none border border-rule bg-paper px-3 py-2 text-[0.9375rem] text-ink placeholder:text-slate/70 focus:border-navy focus:outline-none"
+          data-input></textarea>
+        <button
+          type="submit"
+          class="bg-navy px-4 py-3 text-sm font-medium text-bone transition-colors duration-150 hover:bg-ink disabled:opacity-50"
+          data-send
+        >
+          Gönder
+        </button>
+      </div>
+      <p class="mt-3 text-[0.6875rem] leading-snug text-slate">
+        Kimlik numarası, sağlık bilgisi veya belge paylaşmayın. Konuşmalar kaydedilmez.
+        <a href="/kvkk" class="underline underline-offset-2 hover:text-ink">KVKK</a>
+      </p>
+    </form>
+  </section>
+
+  <button
+    type="button"
+    class="m-4 bg-navy px-5 py-3.5 text-sm font-medium text-bone transition-colors duration-150 hover:bg-ink sm:m-0"
+    aria-expanded="false"
+    aria-controls="asistan-panel"
+    data-toggle
+  >
+    <span data-toggle-label>Ön bilgilendirme</span>
+  </button>
+</div>
+
+<style>
+  .asistan :global(.msg-bot) {
+    color: var(--color-ink);
+    max-width: 92%;
+  }
+  .asistan :global(.msg-user) {
+    margin-left: auto;
+    max-width: 85%;
+    background: var(--color-paper);
+    border: 1px solid var(--color-rule);
+    padding: 0.5rem 0.75rem;
+    white-space: pre-wrap;
+  }
+  .asistan :global(.msg-bot ul) {
+    list-style: square;
+    padding-left: 1.25rem;
+    margin: 0.25rem 0;
+  }
+  .asistan :global(.msg-bot li::marker) {
+    color: var(--color-bronze);
+  }
+  .asistan :global(.msg-error) {
+    color: #8a2c1d;
+    font-size: 0.875rem;
+  }
+  .asistan :global(.msg-wait) {
+    color: var(--color-slate);
+    font-size: 0.875rem;
+  }
+  @media (max-width: 639px) {
+    .asistan [data-panel]:not(.hidden) ~ [data-toggle] {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type Msg = { role: 'user' | 'assistant'; content: string };
+
+  const root = document.querySelector<HTMLElement>('[data-asistan]');
+  if (root) {
+    const panel = root.querySelector<HTMLElement>('[data-panel]')!;
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const toggleLabel = root.querySelector<HTMLElement>('[data-toggle-label]')!;
+    const closeBtn = root.querySelector<HTMLButtonElement>('[data-close]')!;
+    const log = root.querySelector<HTMLElement>('[data-log]')!;
+    const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+    const input = root.querySelector<HTMLTextAreaElement>('[data-input]')!;
+    const send = root.querySelector<HTMLButtonElement>('[data-send]')!;
+    const suggestions = root.querySelector<HTMLElement>('[data-suggestions]');
+    const history: Msg[] = [];
+    let busy = false;
+
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle('hidden', !open);
+      panel.classList.toggle('flex', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggleLabel.textContent = open ? 'Kapat' : 'Ön bilgilendirme';
+      if (open) input.focus();
+      else toggle.focus();
+    };
+
+    toggle.addEventListener('click', () => setOpen(panel.classList.contains('hidden')));
+    closeBtn.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.classList.contains('hidden')) setOpen(false);
+    });
+
+    const escape = (s: string) =>
+      s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+
+    /** Güvenli, sınırlı biçimlendirme: **kalın**, "- " listeleri, satır sonları. */
+    const render = (text: string) => {
+      const lines = escape(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').split('\n');
+      let html = '';
+      let inList = false;
+      for (const line of lines) {
+        const m = line.match(/^\s*[-*•]\s+(.*)$/);
+        if (m) {
+          if (!inList) (html += '<ul>'), (inList = true);
+          html += `<li>${m[1]}</li>`;
+        } else {
+          if (inList) (html += '</ul>'), (inList = false);
+          if (line.trim()) html += `<p>${line}</p>`;
+        }
+      }
+      if (inList) html += '</ul>';
+      return html;
+    };
+
+    const add = (cls: string, html: string) => {
+      const el = document.createElement('div');
+      el.className = cls;
+      el.innerHTML = html;
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+      return el;
+    };
+
+    const ask = async (text: string) => {
+      const content = text.trim();
+      if (!content || busy) return;
+      busy = true;
+      send.disabled = true;
+      suggestions?.remove();
+      history.push({ role: 'user', content });
+      add('msg-user', escape(content));
+      input.value = '';
+      const wait = add('msg-wait', 'Yanıt hazırlanıyor…');
+
+      try {
+        const res = await fetch('/api/asistan', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
+        const data = await res.json().catch(() => ({}));
+        wait.remove();
+        if (!res.ok || !data.reply) {
+          history.pop();
+          add('msg-error', escape(data.error || 'Asistan şu anda yanıt veremiyor. Telefon veya e-posta ile ulaşabilirsiniz.'));
+        } else {
+          history.push({ role: 'assistant', content: data.reply });
+          add('msg-bot space-y-2', render(data.reply));
+        }
+      } catch {
+        wait.remove();
+        history.pop();
+        add('msg-error', 'Bağlantı kurulamadı. Lütfen tekrar deneyin.');
+      } finally {
+        busy = false;
+        send.disabled = false;
+        input.focus();
+      }
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      ask(input.value);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        ask(input.value);
+      }
+    });
+    root.querySelectorAll<HTMLButtonElement>('[data-suggestion]').forEach((b) =>
+      b.addEventListener('click', () => ask(b.textContent || '')),
+    );
+  }
+</script>

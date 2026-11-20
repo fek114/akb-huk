@@ -1,16 +1,16 @@
 ---
 /**
- * Sağ alt köşe ayrılmış alanı.
- * İleride Cloudflare Workers tabanlı Ön Bilgilendirme Asistanı buraya yerleşecek.
- * Şu an boştur ve sayfa düzenini etkilemez (pointer-events: none).
+ * Sağ alt köşe ayrılmış alanı — ön bilgilendirme asistanı burada yaşar.
+ * Sarmalayıcı tıklamaları geçirir (pointer-events: none); içerik kendi tıklamalarını alır.
  * Katman: var(--z-floating). Sitedeki başka hiçbir öğe bu köşeye konumlandırılmamalıdır.
  */
+import { contactChannels } from '../config/contact';
+import Asistan from './Asistan.astro';
 ---
 
 <div
   id="floating-slot"
-  class="pointer-events-none fixed right-4 bottom-4 z-(--z-floating) md:right-8 md:bottom-8"
-  aria-hidden="true"
+  class="pointer-events-none fixed right-0 bottom-0 z-(--z-floating) flex flex-col items-end sm:right-6 sm:bottom-6"
 >
-  <slot />
+  {contactChannels.asistan.enabled && <Asistan />}
 </div>
