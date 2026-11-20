@@ -41,4 +41,11 @@ const base = 'inline-flex items-center justify-center px-6 py-4 text-sm font-med
     Telefonla ulaşın
   </a>
   <a href={mailHref} class:list={[base, secondary]}>E-posta gönderin</a>
+  {
+    contactChannels.asistan.enabled && (
+      <button type="button" class:list={[base, secondary]} data-open-asistan>
+        Ön bilgilendirme
+      </button>
+    )
+  }
 </div>

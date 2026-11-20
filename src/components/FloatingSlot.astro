@@ -10,7 +10,7 @@ import Asistan from './Asistan.astro';
 
 <div
   id="floating-slot"
-  class="pointer-events-none fixed right-0 bottom-0 z-(--z-floating) flex flex-col items-end sm:right-6 sm:bottom-6"
+  class="pointer-events-none fixed right-0 bottom-0 left-0 sm:left-auto z-(--z-floating) flex flex-col items-end sm:right-6 sm:bottom-6"
 >
   {contactChannels.asistan.enabled && <Asistan />}
 </div>
