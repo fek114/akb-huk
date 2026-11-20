@@ -1,23 +1,34 @@
 ---
 /**
  * Ön bilgilendirme asistanı — sohbet paneli.
+ * - Konu düğmeleriyle başlangıç, sayfaya göre öneri
+ * - Akan yanıt (POST /api/asistan, stream: true)
+ * - Süreli işlem uyarısı (tarayıcıda anahtar kelimeyle)
+ * - Sabit görüşme düğmeleri ve "Talep özeti" kartı ([[TALEP|...]] satırından)
  * Mesajlar yalnızca sayfa açıkken bellekte tutulur; hiçbir yerde saklanmaz.
- * Sunucu tarafı: worker/index.ts (POST /api/asistan).
  */
-import { contactChannels } from '../config/contact';
-const { suggestions } = contactChannels.asistan;
+import { contactChannels, mailHref } from '../config/contact';
+import { site } from '../config/site';
+
+const { topics, pageSuggestions, urgentPattern } = contactChannels.asistan;
 const wa = contactChannels.whatsapp;
-const waNumber = wa.enabled ? wa.number : '';
+const config = {
+  wa: wa.enabled ? wa.number : '',
+  tel: site.phone.href,
+  phone: site.phone.display,
+  email: site.email,
+  mail: mailHref,
+  pageSuggestions,
+  urgentPattern,
+};
 ---
 
-<div
-  class="asistan pointer-events-auto flex w-full flex-col items-end sm:w-auto"
-  data-asistan
-  data-wa={waNumber}
->
+<div class="asistan pointer-events-auto flex w-full flex-col items-end sm:w-auto" data-asistan>
+  <script type="application/json" data-config set:html={JSON.stringify(config)} />
+
   <section
     id="asistan-panel"
-    class="hidden h-[min(600px,calc(100svh-5rem))] w-full flex-col border-t border-ink bg-bone sm:mb-3 sm:w-[400px] sm:border"
+    class="hidden h-[min(640px,calc(100svh-5rem))] w-full flex-col border-t border-ink bg-bone sm:mb-3 sm:w-[400px] sm:border"
     role="dialog"
     aria-modal="false"
     aria-labelledby="asistan-baslik"
@@ -33,27 +44,67 @@ const waNumber = wa.enabled ? wa.number : '';
       </button>
     </header>
 
+    <!-- Süreli işlem uyarısı -->
+    <div class="hidden border-b border-rule bg-paper px-5 py-3" data-urgent role="status">
+      <p class="text-sm text-ink">
+        Süreli bir işlemden söz ediyorsunuz. Yasal süreler kısa olabilir; telefonla doğrudan ulaşmanız uygun olur.
+      </p>
+      <a href={site.phone.href} class="mt-2 inline-block text-sm font-medium text-navy underline underline-offset-4">
+        {site.phone.display} numarasını arayın
+      </a>
+    </div>
+
     <div class="flex-1 space-y-4 overflow-y-auto px-5 py-5 text-[0.9375rem] leading-relaxed" data-log aria-live="polite">
       <div class="msg-bot">
-        Merhaba. Büromuzun çalışma alanları, görüşme süreci ve iletişim kanalları hakkında bilgi verebilirim. Konunuzu
-        kısaca yazabilirsiniz.
+        <p>Merhaba. Konunuzu seçin ya da kısaca yazın; hangi çalışma alanına girdiğini ve büromuza nasıl ulaşabileceğinizi belirteyim.</p>
       </div>
-      <div class="flex flex-wrap gap-2" data-suggestions>
-        {
-          suggestions.map((s) => (
-            <button
-              type="button"
-              class="border border-rule bg-paper px-3 py-2 text-left text-sm text-ink transition-colors duration-150 hover:border-ink"
-              data-suggestion
-            >
-              {s}
-            </button>
-          ))
-        }
+      <div data-start>
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {
+            topics.map((t) => (
+              <button
+                type="button"
+                class="border border-rule bg-paper px-3 py-2.5 text-left text-sm text-ink transition-colors duration-150 hover:border-ink"
+                data-topic={t.label}
+                data-message={t.message}
+              >
+                {t.label}
+              </button>
+            ))
+          }
+        </div>
+        <button
+          type="button"
+          class="mt-3 hidden w-full border border-rule px-3 py-2.5 text-left text-sm text-slate transition-colors duration-150 hover:border-ink hover:text-ink"
+          data-page-suggestion
+        ></button>
       </div>
     </div>
 
-    <form class="border-t border-rule px-5 py-4" data-form>
+    <!-- Sabit görüşme düğmeleri (ilk yanıttan sonra görünür) -->
+    <div class="hidden gap-2 border-t border-rule px-5 pt-3" data-actions>
+      {
+        config.wa && (
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 bg-navy px-3 py-2.5 text-center text-sm font-medium text-bone transition-colors duration-150 hover:bg-ink"
+            data-wa-link
+          >
+            WhatsApp ile devam et
+          </a>
+        )
+      }
+      <a
+        href={site.phone.href}
+        class="flex-1 border border-ink/30 px-3 py-2.5 text-center text-sm font-medium text-ink transition-colors duration-150 hover:border-ink"
+      >
+        Ara
+      </a>
+    </div>
+
+    <form class="px-5 pt-3 pb-4" data-form>
       <label for="asistan-girdi" class="sr-only">Mesajınız</label>
       <div class="flex items-end gap-3">
         <textarea
@@ -92,7 +143,10 @@ const waNumber = wa.enabled ? wa.number : '';
 <style>
   .asistan :global(.msg-bot) {
     color: var(--color-ink);
-    max-width: 92%;
+    max-width: 94%;
+  }
+  .asistan :global(.msg-bot > * + *) {
+    margin-top: 0.5rem;
   }
   .asistan :global(.msg-user) {
     margin-left: auto;
@@ -105,7 +159,6 @@ const waNumber = wa.enabled ? wa.number : '';
   .asistan :global(.msg-bot ul) {
     list-style: square;
     padding-left: 1.25rem;
-    margin: 0.25rem 0;
   }
   .asistan :global(.msg-bot li::marker) {
     color: var(--color-bronze);
@@ -127,21 +180,41 @@ const waNumber = wa.enabled ? wa.number : '';
 
 <script>
   type Msg = { role: 'user' | 'assistant'; content: string };
+  type Talep = { alan: string; sureli: boolean; mesaj: string };
+  type Config = {
+    wa: string;
+    tel: string;
+    phone: string;
+    email: string;
+    mail: string;
+    pageSuggestions: Record<string, string>;
+    urgentPattern: string;
+  };
 
   const root = document.querySelector<HTMLElement>('[data-asistan]');
   if (root) {
-    const panel = root.querySelector<HTMLElement>('[data-panel]')!;
-    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
-    const toggleLabel = root.querySelector<HTMLElement>('[data-toggle-label]')!;
-    const closeBtn = root.querySelector<HTMLButtonElement>('[data-close]')!;
-    const log = root.querySelector<HTMLElement>('[data-log]')!;
-    const form = root.querySelector<HTMLFormElement>('[data-form]')!;
-    const input = root.querySelector<HTMLTextAreaElement>('[data-input]')!;
-    const send = root.querySelector<HTMLButtonElement>('[data-send]')!;
-    const suggestions = root.querySelector<HTMLElement>('[data-suggestions]');
+    const cfg: Config = JSON.parse(root.querySelector('[data-config]')!.textContent || '{}');
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const panel = $('[data-panel]');
+    const toggle = $<HTMLButtonElement>('[data-toggle]');
+    const toggleLabel = $('[data-toggle-label]');
+    const log = $('[data-log]');
+    const form = $<HTMLFormElement>('[data-form]');
+    const input = $<HTMLTextAreaElement>('[data-input]');
+    const send = $<HTMLButtonElement>('[data-send]');
+    const start = root.querySelector<HTMLElement>('[data-start]');
+    const actions = $('[data-actions]');
+    const waLink = root.querySelector<HTMLAnchorElement>('[data-wa-link]');
+    const urgent = $('[data-urgent]');
+    const pageBtn = root.querySelector<HTMLButtonElement>('[data-page-suggestion]');
+    const urgentRe = new RegExp(cfg.urgentPattern, 'i');
+
     const history: Msg[] = [];
     let busy = false;
+    let topicLabel = '';
+    let talep: Talep | null = null;
 
+    // ── Aç / kapat ─────────────────────────────────────────────
     const setOpen = (open: boolean) => {
       panel.classList.toggle('hidden', !open);
       panel.classList.toggle('flex', open);
@@ -150,44 +223,52 @@ const waNumber = wa.enabled ? wa.number : '';
       if (open) input.focus();
       else toggle.focus();
     };
-
     toggle.addEventListener('click', () => setOpen(panel.classList.contains('hidden')));
-    closeBtn.addEventListener('click', () => setOpen(false));
+    $('[data-close]').addEventListener('click', () => setOpen(false));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !panel.classList.contains('hidden')) setOpen(false);
     });
 
+    // ── Sayfaya göre öneri ─────────────────────────────────────
+    const path = location.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+    const articleTitle = document.querySelector('article h1')?.textContent?.trim() || '';
+    const pageKey = Object.keys(cfg.pageSuggestions).find((k) => (k.endsWith('/') ? path.startsWith(k) : path === k));
+    if (pageBtn && pageKey) {
+      const text = cfg.pageSuggestions[pageKey].replace('{baslik}', articleTitle);
+      if (!pageKey.endsWith('/') || articleTitle) {
+        pageBtn.textContent = text;
+        pageBtn.classList.remove('hidden');
+        pageBtn.addEventListener('click', () => ask(text));
+      }
+    }
+
+    // ── Yardımcılar ────────────────────────────────────────────
     const escape = (s: string) =>
       s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-    const waNumber = root.dataset.wa || '';
-    const DRAFT = /^\s*\**\s*Gönderebileceğiniz mesaj:?\s*\**\s*["“”]?(.+?)["“”]?\s*$/i;
+    const TAG = /\[\[TALEP\|([^\]]*)\]\]/;
+    /** Görüntülenecek metin: talep satırını ve akış sırasında yarım kalan "[[" parçasını gizler. */
+    const visible = (text: string) => text.replace(TAG, '').replace(/\[\[[^\]]*$/, '').trim();
 
-    /** Mesaj taslağı satırını, metni gösteren ve WhatsApp'ta açan bir bloğa çevirir. */
-    const draftBlock = (draft: string) => {
-      const safe = escape(draft);
-      if (!waNumber) return `<p class="border-l border-bronze pl-3 text-slate">${safe}</p>`;
-      const href = `https://wa.me/${waNumber}?text=${encodeURIComponent(draft)}`;
-      return `<div class="border border-rule bg-paper p-3">
-        <p class="text-xs text-slate">Gönderebileceğiniz mesaj</p>
-        <p class="mt-1">${safe}</p>
-        <a href="${href}" target="_blank" rel="noopener noreferrer"
-           class="mt-3 inline-block bg-navy px-3 py-2 text-xs font-medium text-bone hover:bg-ink">Bu mesajı WhatsApp'ta aç</a>
-      </div>`;
+    const parseTalep = (text: string): Talep | null => {
+      const m = text.match(TAG);
+      if (!m) return null;
+      const fields = Object.fromEntries(
+        m[1].split('|').map((kv) => {
+          const i = kv.indexOf('=');
+          return [kv.slice(0, i).trim(), kv.slice(i + 1).trim()];
+        }),
+      );
+      const mesaj = (fields.mesaj || '').replace(/^["“]|["”]$/g, '');
+      if (!mesaj) return null;
+      return { alan: fields.alan || 'Genel', sureli: /^evet/i.test(fields.sureli || ''), mesaj };
     };
 
-    /** Güvenli, sınırlı biçimlendirme: **kalın**, "- " listeleri, satır sonları, mesaj taslağı. */
+    /** Güvenli, sınırlı biçimlendirme: **kalın**, "- " listeleri, paragraflar. */
     const render = (text: string) => {
-      const rawLines = text.split('\n');
       let html = '';
       let inList = false;
-      for (const raw of rawLines) {
-        const d = raw.match(DRAFT);
-        if (d && d[1].trim().length > 3) {
-          if (inList) (html += '</ul>'), (inList = false);
-          html += draftBlock(d[1].trim().replace(/\*\*/g, ''));
-          continue;
-        }
+      for (const raw of text.split('\n')) {
         const line = escape(raw).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         const m = line.match(/^\s*[-*•]\s+(.*)$/);
         if (m) {
@@ -211,36 +292,108 @@ const waNumber = wa.enabled ? wa.number : '';
       return el;
     };
 
+    const waText = () =>
+      talep?.mesaj ||
+      (topicLabel && topicLabel !== 'Diğer'
+        ?`Merhaba, ${topicLabel.toLocaleLowerCase('tr-TR')} konusunda görüşme talebinde bulunmak istiyorum.`
+        : 'Merhaba, site üzerinden ön bilgi aldım; görüşme talebinde bulunmak istiyorum.');
+    const waUrl = (text: string) => `https://wa.me/${cfg.wa}?text=${encodeURIComponent(text)}`;
+
+    const showActions = () => {
+      actions.classList.remove('hidden');
+      actions.classList.add('flex');
+      if (waLink) waLink.href = waUrl(waText());
+    };
+
+    const showUrgent = () => urgent.classList.remove('hidden');
+
+    /** "Talep özeti" kartı */
+    const talepCard = (t: Talep) => {
+      const mailto = `mailto:${cfg.email}?subject=${encodeURIComponent(`Görüşme talebi — ${t.alan}`)}&body=${encodeURIComponent(t.mesaj)}`;
+      const btn =
+        'inline-block px-3 py-2 text-xs font-medium transition-colors duration-150';
+      return `<div class="border border-ink bg-paper p-4">
+        <p class="font-serif text-lg leading-tight">Talep özetiniz</p>
+        <dl class="mt-3 space-y-1 text-sm">
+          <div class="flex gap-2"><dt class="text-slate">Alan:</dt><dd>${escape(t.alan)}</dd></div>
+          ${t.sureli ? '<div class="flex gap-2"><dt class="text-slate">Süreli işlem:</dt><dd>Evet, telefonla ulaşmanız önerilir</dd></div>' : ''}
+        </dl>
+        <p class="mt-3 border-l border-bronze pl-3 text-sm text-ink">${escape(t.mesaj)}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          ${
+            t.sureli
+              ? `<a href="${cfg.tel}" class="${btn} bg-navy text-bone hover:bg-ink">Ara</a>`
+              : ''
+          }
+          ${
+            cfg.wa
+              ? `<a href="${waUrl(t.mesaj)}" target="_blank" rel="noopener noreferrer" class="${btn} ${t.sureli ? 'border border-ink/30 text-ink hover:border-ink' : 'bg-navy text-bone hover:bg-ink'}">WhatsApp'ta gönder</a>`
+              : ''
+          }
+          ${t.sureli ? '' : `<a href="${cfg.tel}" class="${btn} border border-ink/30 text-ink hover:border-ink">Ara</a>`}
+          <a href="${mailto}" class="${btn} border border-ink/30 text-ink hover:border-ink">E-posta</a>
+        </div>
+      </div>`;
+    };
+
+    // ── Gönder / akış ──────────────────────────────────────────
     const ask = async (text: string) => {
       const content = text.trim();
       if (!content || busy) return;
       busy = true;
       send.disabled = true;
-      suggestions?.remove();
+      start?.remove();
+      if (urgentRe.test(content.toLocaleLowerCase('tr-TR'))) showUrgent();
+
       history.push({ role: 'user', content });
       add('msg-user', escape(content));
       input.value = '';
-      const wait = add('msg-wait', 'Yanıt hazırlanıyor…');
+      const bot = add('msg-wait', 'Yanıt hazırlanıyor…');
+      let full = '';
 
       try {
         const res = await fetch('/api/asistan', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ messages: history }),
+          body: JSON.stringify({
+            messages: history,
+            stream: true,
+            page: { path, title: document.title },
+          }),
         });
-        const data = await res.json().catch(() => ({}));
-        wait.remove();
-        if (!res.ok || !data.reply) {
-          history.pop();
-          add('msg-error', escape(data.error || 'Asistan şu anda yanıt veremiyor. Telefon veya e-posta ile ulaşabilirsiniz.'));
-        } else {
-          history.push({ role: 'assistant', content: data.reply });
-          add('msg-bot space-y-2', render(data.reply));
+
+        if (!res.ok || !res.body || !(res.headers.get('content-type') || '').startsWith('text/plain')) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Asistan şu anda yanıt veremiyor. Telefon veya e-posta ile ulaşabilirsiniz.');
         }
-      } catch {
-        wait.remove();
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        bot.className = 'msg-bot';
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          full += decoder.decode(value, { stream: true });
+          bot.innerHTML = render(visible(full));
+          log.scrollTop = log.scrollHeight;
+        }
+        full += decoder.decode();
+        if (!visible(full)) throw new Error('Yanıt üretilemedi. Lütfen tekrar deneyin.');
+
+        bot.innerHTML = render(visible(full));
+        history.push({ role: 'assistant', content: full.trim() });
+
+        const t = parseTalep(full);
+        if (t && !talep) {
+          talep = t;
+          add('', talepCard(t));
+          if (t.sureli) showUrgent();
+        }
+        showActions();
+      } catch (err) {
+        bot.remove();
         history.pop();
-        add('msg-error', 'Bağlantı kurulamadı. Lütfen tekrar deneyin.');
+        add('msg-error', escape((err as Error).message || 'Bağlantı kurulamadı. Lütfen tekrar deneyin.'));
       } finally {
         busy = false;
         send.disabled = false;
@@ -258,8 +411,11 @@ const waNumber = wa.enabled ? wa.number : '';
         ask(input.value);
       }
     });
-    root.querySelectorAll<HTMLButtonElement>('[data-suggestion]').forEach((b) =>
-      b.addEventListener('click', () => ask(b.textContent || '')),
+    root.querySelectorAll<HTMLButtonElement>('[data-topic]').forEach((b) =>
+      b.addEventListener('click', () => {
+        topicLabel = b.dataset.topic || '';
+        ask(b.dataset.message || b.textContent || '');
+      }),
     );
   }
 </script>

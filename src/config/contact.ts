@@ -24,7 +24,26 @@ export const contactChannels = {
   /** Sağ alt köşedeki ön bilgilendirme asistanı (Workers AI, /api/asistan) */
   asistan: {
     enabled: true,
-    suggestions: ['Çalışma alanlarınız neler?', 'İlk görüşme nasıl işliyor?', 'Ücretler nasıl belirleniyor?'],
+    /** Panel açılışındaki konu düğmeleri: etiket + asistana gönderilen mesaj */
+    topics: [
+      { label: 'Şirket', message: 'Şirketimizle ilgili bir konuda bilgi almak istiyorum.' },
+      { label: 'Sözleşme', message: 'Bir sözleşme hakkında bilgi almak istiyorum.' },
+      { label: 'İş hukuku', message: 'İş hukuku ile ilgili bir konum var.' },
+      { label: 'Gayrimenkul', message: 'Gayrimenkul veya inşaatla ilgili bir konum var.' },
+      { label: 'Dava ve icra', message: 'Bir dava veya icra takibiyle ilgili bilgi almak istiyorum.' },
+      { label: 'Diğer', message: 'Farklı bir hukuki konuda bilgi almak istiyorum.' },
+    ],
+    /** Sayfaya göre ek öneri. `{baslik}` yayın başlığıyla değiştirilir. */
+    pageSuggestions: {
+      '/kadro': 'Hangi avukatla görüşebilirim?',
+      '/iletisim': 'İlk görüşme nasıl işliyor?',
+      '/calisma-alanlari': 'Konumun hangi alana girdiğinden emin değilim.',
+      '/hakkimizda': 'Büronuz hangi işletmelerle çalışıyor?',
+      '/yayinlar/': '"{baslik}" konusunda işletmemiz için görüşmek istiyoruz.',
+    } as Record<string, string>,
+    /** Süreli işlem uyarısını tetikleyen ifadeler (küçük harf, Türkçe) */
+    urgentPattern:
+      'tebli[gğ]|ödeme emri|haciz|hacz|gözalt|tutukla|ihtarname|dava aç[ıi]ld|dava açt[ıi]|dilekçe geldi|işten çıkar|fesih bildir|icra takib|son gün|yarın duruşma|duruşma',
   },
   calcom: {
     enabled: false,

@@ -93,15 +93,35 @@ async function asistan(request: Request, env: Env): Promise<Response> {
   if (!messages) return json({ error: 'Geçersiz mesaj.' }, 400);
 
   const model = env.AI_MODEL || DEFAULT_MODEL;
+  const system = `${SYSTEM_PROMPT}\n\n${contextBlock(body?.page)}`;
+  const input = {
+    messages: [{ role: 'system', content: system }, ...messages],
+    max_tokens: 700,
+    temperature: 0.3,
+    // Akıl yürütme ("thinking") adımını kapatır: daha hızlı ve token bütçesi doğrudan yanıta gider.
+    chat_template_kwargs: { enable_thinking: false },
+    reasoning_effort: 'low',
+  };
+
+  // Akan yanıt: istemci `stream: true` gönderirse düz metin parçaları akar.
+  if (body?.stream === true) {
+    try {
+      const upstream = (await env.AI.run(model, { ...input, stream: true })) as ReadableStream<Uint8Array>;
+      return new Response(toTextStream(upstream), {
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+        },
+      });
+    } catch (err) {
+      console.error('AI stream error', err);
+      return json({ error: 'Asistan şu anda yanıt veremiyor. Telefon veya e-posta ile ulaşabilirsiniz.' }, 502);
+    }
+  }
+
   try {
-    const out = await env.AI.run(model, {
-      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-      max_tokens: 700,
-      temperature: 0.3,
-      // Akıl yürütme ("thinking") adımını kapatır: daha hızlı ve token bütçesi doğrudan yanıta gider.
-      chat_template_kwargs: { enable_thinking: false },
-      reasoning_effort: 'low',
-    });
+    const out = await env.AI.run(model, input);
     const reply = extractText(out).trim();
     if (!reply) {
       console.error('Empty AI output shape', JSON.stringify(out).slice(0, 600));
@@ -112,6 +132,77 @@ async function asistan(request: Request, env: Env): Promise<Response> {
     console.error('AI error', err);
     return json({ error: 'Asistan şu anda yanıt veremiyor. Telefon veya e-posta ile ulaşabilirsiniz.' }, 502);
   }
+}
+
+/** Workers AI SSE akışını ("data: {...}") düz metin parçalarına çevirir. */
+function toTextStream(upstream: ReadableStream<Uint8Array>): ReadableStream<Uint8Array> {
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let buffer = '';
+  return upstream.pipeThrough(
+    new TransformStream<Uint8Array, Uint8Array>({
+      transform(chunk, controller) {
+        buffer += decoder.decode(chunk, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          const t = line.trim();
+          if (!t.startsWith('data:')) continue;
+          const data = t.slice(5).trim();
+          if (!data || data === '[DONE]') continue;
+          try {
+            const j = JSON.parse(data);
+            const piece: string = j.response ?? j.choices?.[0]?.delta?.content ?? j.choices?.[0]?.text ?? '';
+            if (piece) controller.enqueue(encoder.encode(piece));
+          } catch {
+            /* yarım satır; bir sonraki parçada tamamlanır */
+          }
+        }
+      },
+    }),
+  );
+}
+
+const SAYFALAR: Record<string, string> = {
+  '/': 'Ana sayfa',
+  '/hakkimizda': 'Hakkımızda',
+  '/kadro': 'Kadro (avukatlar)',
+  '/calisma-alanlari': 'Çalışma alanları',
+  '/yayinlar': 'Yayınlar listesi',
+  '/iletisim': 'İletişim',
+  '/kvkk': 'KVKK aydınlatma metni',
+};
+
+/** Konuşmaya eklenen anlık bağlam: Türkiye saati, mesai durumu, ziyaretçinin bulunduğu sayfa. */
+function contextBlock(page: unknown): string {
+  const now = new Date();
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('tr-TR', {
+      timeZone: 'Europe/Istanbul',
+      weekday: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    })
+      .formatToParts(now)
+      .map((p) => [p.type, p.value]),
+  );
+  const hour = Number(parts.hour);
+  const weekend = parts.weekday === 'Cumartesi' || parts.weekday === 'Pazar';
+  const mesai = !weekend && hour >= 9 && hour < 18;
+
+  let sayfa = 'bilinmiyor';
+  if (typeof page === 'object' && page) {
+    const p = page as { path?: unknown; title?: unknown };
+    const path = typeof p.path === 'string' ? p.path.slice(0, 120).replace(/\.html$/, '') : '';
+    const title = typeof p.title === 'string' ? p.title.slice(0, 160).replace(/[\r\n]/g, ' ') : '';
+    if (path.startsWith('/yayinlar/')) sayfa = `Yayın: "${title.replace(/ — .*$/, '')}"`;
+    else if (SAYFALAR[path]) sayfa = SAYFALAR[path];
+  }
+
+  return `ANLIK BAĞLAM
+- Şu an Türkiye saatiyle ${parts.weekday}, ${parts.hour}:${parts.minute}. Büro ${mesai ? 'mesai saatleri içinde' : 'mesai saatleri dışında'}.
+- Ziyaretçinin bulunduğu sayfa: ${sayfa}.`;
 }
 
 export default {
