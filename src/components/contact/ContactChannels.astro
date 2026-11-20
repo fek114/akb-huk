@@ -1,22 +1,37 @@
 ---
 /**
- * Modüler iletişim/randevu kanalları.
- * `src/config/contact.ts` içinde hiçbir kanal açık değilse hiçbir şey render edilmez.
+ * Görüşme talebi alanı: düğmeler + (açıksa) konuya göre WhatsApp + (açıksa) Cal.com.
+ * Kanallar `src/config/contact.ts` içinden açılıp kapatılır.
  */
 import { contactChannels } from '../../config/contact';
+import GorusmeButonlari from './GorusmeButonlari.astro';
 import WhatsAppLink from './WhatsAppLink.astro';
 import CalEmbed from './CalEmbed.astro';
 
 const { whatsapp, calcom } = contactChannels;
-const anyEnabled = (whatsapp.enabled && whatsapp.number) || (calcom.enabled && calcom.calLink);
 ---
 
-{
-  anyEnabled && (
-    <section class="border-t border-rule pt-10" aria-labelledby="kanallar-baslik">
-      <h2 id="kanallar-baslik" class="label mb-6">Görüşme Talebi</h2>
-      {whatsapp.enabled && whatsapp.number && <WhatsAppLink />}
-      {calcom.enabled && calcom.calLink && <CalEmbed />}
-    </section>
-  )
-}
+<section id="gorusme-talebi" class="scroll-mt-28" aria-labelledby="gorusme-talebi-baslik">
+  <h2 id="gorusme-talebi-baslik" class="h2">Görüşme talebi</h2>
+  <p class="mt-4 max-w-xl text-slate">
+    Konunuzu kısaca iletmeniz yeterlidir; ön bilgi ve çıkar çatışması kontrolünün ardından size randevu için dönüş
+    yapılır.
+  </p>
+  <div class="mt-8">
+    <GorusmeButonlari />
+  </div>
+  {
+    whatsapp.enabled && whatsapp.number && (
+      <div class="mt-12">
+        <WhatsAppLink />
+      </div>
+    )
+  }
+  {
+    calcom.enabled && calcom.calLink && (
+      <div class="mt-12">
+        <CalEmbed />
+      </div>
+    )
+  }
+</section>

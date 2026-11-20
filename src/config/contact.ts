@@ -3,17 +3,22 @@
  * Bir kanal `enabled: false` iken ilgili bileşen hiç render edilmez
  * ve sayfaya herhangi bir üçüncü taraf kodu eklenmez.
  */
+import { site } from './site';
+
 export const contactChannels = {
   whatsapp: {
-    enabled: false,
+    enabled: true,
     /** Ülke koduyla, boşluksuz: 90XXXXXXXXXX */
-    number: '',
-    /** wa.me ön tanımlı konu metinleri */
+    number: site.phone.whatsapp,
+    /** Genel düğmenin ön tanımlı mesajı */
+    defaultText: 'Merhaba, görüşme talebinde bulunmak istiyorum. Konu: ',
+    /** Konuya göre ön tanımlı mesajlar */
     topics: [
-      'Şirketler ve ticaret hukuku hakkında görüşme talebi',
-      'Sözleşme incelemesi hakkında görüşme talebi',
-      'İş hukuku hakkında görüşme talebi',
-      'Genel bilgi talebi',
+      'Şirket ve ticaret hukuku',
+      'Sözleşme hazırlığı veya incelemesi',
+      'İş hukuku ve işçi-işveren ilişkileri',
+      'Gayrimenkul ve inşaat',
+      'Uyuşmazlık, dava veya icra takibi',
     ],
   },
   calcom: {
@@ -26,3 +31,9 @@ export const contactChannels = {
 export function waHref(number: string, text: string): string {
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }
+
+export function topicText(topic: string): string {
+  return `Merhaba, ${topic.toLocaleLowerCase('tr-TR')} konusunda görüşme talebinde bulunmak istiyorum.`;
+}
+
+export const mailHref = `mailto:${site.email}?subject=${encodeURIComponent('Görüşme talebi')}`;

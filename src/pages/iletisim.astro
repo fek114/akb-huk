@@ -6,15 +6,12 @@ import ContactChannels from '../components/contact/ContactChannels.astro';
 import GorusmeSureci from '../components/GorusmeSureci.astro';
 ---
 
-<Layout title="İletişim" description="Akbulut Hukuk Bürosu iletişim bilgileri, adres, çalışma saatleri ve ilk görüşme süreci.">
+<Layout title="İletişim" description="Akbulut Hukuk Bürosu iletişim bilgileri, görüşme talebi, adres ve çalışma saatleri.">
   <PageHeader label="İletişim" title="Büromuz" />
 
   <section class="wrap grid grid-cols-1 gap-16 py-20 md:grid-cols-12 md:py-28">
     <div class="md:col-span-7">
-      <ContactBlock />
-      <div class="mt-16">
-        <ContactChannels />
-      </div>
+      <ContactChannels />
     </div>
 
     <aside class="text-sm text-slate md:col-span-4 md:col-start-9">
@@ -23,10 +20,19 @@ import GorusmeSureci from '../components/GorusmeSureci.astro';
         gerekli belgeler randevu aşamasında birlikte belirlenir.
       </p>
       <p class="mt-6 border-t border-rule pt-6">
-        Kişisel verilerinizin işlenmesine ilişkin bilgi için
-        <a href="/kvkk" class="link">KVKK Aydınlatma Metni</a>'ni inceleyebilirsiniz.
+        WhatsApp üzerinden ilettiğiniz mesajlar da dâhil olmak üzere kişisel verilerinizin işlenmesine ilişkin bilgi
+        için <a href="/kvkk" class="link">KVKK Aydınlatma Metni</a>'ni inceleyebilirsiniz.
       </p>
     </aside>
+  </section>
+
+  <section class="border-t border-rule" aria-label="İletişim bilgileri">
+    <div class="wrap grid grid-cols-1 gap-10 py-20 md:grid-cols-12 md:py-24">
+      <h2 class="h2 md:col-span-4">Adres ve saatler</h2>
+      <div class="md:col-span-7 md:col-start-6">
+        <ContactBlock />
+      </div>
+    </div>
   </section>
 
   <div class="border-t border-rule bg-paper">

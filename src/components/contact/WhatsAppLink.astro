@@ -1,22 +1,25 @@
 ---
-import { contactChannels, waHref } from '../../config/contact';
+import { contactChannels, waHref, topicText } from '../../config/contact';
 const { number, topics } = contactChannels.whatsapp;
 ---
 
-<ul class="border-t border-rule">
-  {
-    topics.map((topic) => (
-      <li class="border-b border-rule">
-        <a
-          href={waHref(number, topic)}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center justify-between gap-6 py-4 text-sm text-ink hover:text-navy"
-        >
-          <span>{topic}</span>
-          <span class="label text-slate">WhatsApp ↗</span>
-        </a>
-      </li>
-    ))
-  }
-</ul>
+<div>
+  <p class="text-sm text-slate">Konunuzu seçerek WhatsApp mesajını hazır başlatabilirsiniz:</p>
+  <ul class="mt-4 border-t border-rule">
+    {
+      topics.map((topic) => (
+        <li class="border-b border-rule">
+          <a
+            href={waHref(number, topicText(topic))}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-between gap-6 py-4 text-ink transition-colors duration-150 hover:text-navy"
+          >
+            <span>{topic}</span>
+            <span class="text-sm text-slate">WhatsApp ↗</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

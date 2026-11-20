@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { kadro } from '../data/kadro';
+import { calismaAlanlari } from '../data/calisma-alanlari';
+
+const alanAdi = (no: string) => calismaAlanlari.find((a) => a.no === no);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': kadro.map((a) => ({
+    '@type': 'Person',
+    name: `Av. ${a.ad}`,
+    jobTitle: a.unvan,
+    worksFor: { '@type': 'LegalService', name: 'Akbulut Hukuk Bürosu' },
+    knowsLanguage: ['tr', ...a.diller],
+  })),
+};
+---
+
+<Layout
+  title="Kadro"
+  description="Akbulut Hukuk Bürosu avukatları: unvan, baro kaydı, eğitim ve çalışma alanları."
+  schema={schema}
+>
+  <PageHeader
+    label="Kadro"
+    title="Avukatlarımız"
+    lead="Dosyalarınız, ilgili çalışma alanında deneyimli bir avukatın sorumluluğunda yürütülür."
+  />
+
+  <section class="wrap py-20 md:py-28">
+    <ul class="border-t border-ink">
+      {
+        kadro.map((a) => (
+          <li id={a.id} class="grid scroll-mt-28 grid-cols-1 gap-8 border-b border-rule py-12 md:grid-cols-12 md:gap-8 md:py-16">
+            <div class="md:col-span-4">
+              <h2 class="font-serif text-[2rem] leading-tight tracking-(--tracking-display)">Av. {a.ad}</h2>
+              <p class="mt-2 text-bronze">{a.unvan}</p>
+            </div>
+
+            <div class="md:col-span-7 md:col-start-6">
+              <p class="text-lg leading-relaxed">{a.ozet}</p>
+
+              <dl class="mt-8 grid grid-cols-1 gap-x-8 border-t border-rule text-sm sm:grid-cols-2">
+                <div class="border-b border-rule py-4">
+                  <dt class="text-slate">Baro kaydı</dt>
+                  <dd class="mt-1">
+                    {a.baro}, sicil no {a.sicilNo} · {a.baroKayitYili}
+                  </dd>
+                </div>
+                <div class="border-b border-rule py-4">
+                  <dt class="text-slate">Yabancı dil</dt>
+                  <dd class="mt-1">{a.diller.join(', ')}</dd>
+                </div>
+                <div class="border-b border-rule py-4">
+                  <dt class="text-slate">Eğitim</dt>
+                  <dd class="mt-1">
+                    {a.egitim.map((e) => (
+                      <span class="block">{e}</span>
+                    ))}
+                  </dd>
+                </div>
+                <div class="border-b border-rule py-4">
+                  <dt class="text-slate">Çalışma alanları</dt>
+                  <dd class="mt-1">
+                    {a.alanlar.map((no) => {
+                      const alan = alanAdi(no);
+                      return alan ? (
+                        <a href={`/calisma-alanlari#${alan.id}`} class="link block w-fit">
+                          {alan.title}
+                        </a>
+                      ) : null;
+                    })}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Layout>

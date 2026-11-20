@@ -1,5 +1,6 @@
 ---
 import { formatDate, type Yayin } from '../lib/yayinlar';
+import { avukatBul } from '../data/kadro';
 
 interface Props {
   items: Yayin[];
@@ -24,6 +25,9 @@ const { items } = Astro.props;
               {y.data.title}
             </h3>
             <p class="mt-3 max-w-2xl text-slate">{y.data.description}</p>
+            {avukatBul(y.data.author) && (
+              <p class="mt-4 text-sm text-ink">Av. {avukatBul(y.data.author)!.ad}</p>
+            )}
           </div>
         </a>
       </li>

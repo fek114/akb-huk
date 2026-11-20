@@ -6,6 +6,7 @@ import { site } from '../config/site';
 import { getYayinlar } from '../lib/yayinlar';
 import Photo from '../components/Photo.astro';
 import GorusmeSureci from '../components/GorusmeSureci.astro';
+import GorusmeButonlari from '../components/contact/GorusmeButonlari.astro';
 import bursaUludag from '../assets/images/bursa-uludag.jpg';
 import betonCephe from '../assets/images/beton-cephe.jpg';
 
@@ -139,19 +140,20 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
     </div>
   </div>
 
-  <!-- İletişim şeridi -->
-  <section class="border-t border-rule bg-navy text-bone">
-    <div class="wrap grid grid-cols-1 gap-8 py-20 md:grid-cols-12 md:items-end">
-      <div class="md:col-span-7">
-        <p class="label text-bone/60">İletişim</p>
-        <p class="mt-6 font-serif text-3xl leading-tight tracking-(--tracking-display) text-bone md:text-4xl">
-          {site.address.full}
+  <!-- Görüşme talebi -->
+  <section class="bg-navy text-bone" aria-labelledby="gorusme-cta">
+    <div class="wrap grid grid-cols-1 gap-10 py-20 md:grid-cols-12 md:items-end md:py-24">
+      <div class="md:col-span-6">
+        <h2 id="gorusme-cta" class="font-serif text-[clamp(2rem,3.4vw,3rem)] leading-tight tracking-(--tracking-display) text-bone">
+          Görüşme talebi
+        </h2>
+        <p class="mt-4 max-w-md text-bone/70">
+          Konunuzu kısaca iletin; ön bilgi aşamasının ardından randevu için size dönüş yapılır.
         </p>
       </div>
-      <div class="space-y-2 text-sm md:col-span-4 md:col-start-9 md:text-right">
-        <p><a href={site.phone.href} class="hover:text-bone/70">{site.phone.display}</a></p>
-        <p><a href={`mailto:${site.email}`} class="hover:text-bone/70">{site.email}</a></p>
-        <p class="text-bone/60">{site.hours.display}</p>
+      <div class="md:col-span-6 md:justify-self-end">
+        <GorusmeButonlari tone="dark" />
+        <p class="mt-6 text-sm text-bone/60">{site.address.full} · {site.hours.display}</p>
       </div>
     </div>
   </section>

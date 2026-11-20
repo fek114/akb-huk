@@ -11,6 +11,8 @@ const yayinlar = defineCollection({
     category: z.enum(['Bülten', 'Makale', 'Mevzuat Notu']),
     /** İlgili çalışma alanı numarası (01–06) */
     area: z.enum(['01', '02', '03', '04', '05', '06']).optional(),
+    /** src/data/kadro.ts içindeki avukat id'si */
+    author: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

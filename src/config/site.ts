@@ -27,6 +27,8 @@ export const site = {
   phone: {
     display: '+90 (224) 000 00 00',
     href: 'tel:+902240000000',
+    /** WhatsApp Business hattı — ülke koduyla, boşluksuz. YER TUTUCU. */
+    whatsapp: '902240000000',
   },
 
   email: 'info@akbuluthukuk.av.tr',
@@ -40,6 +42,7 @@ export const site = {
 
 export const nav = [
   { href: '/hakkimizda', label: 'Hakkımızda' },
+  { href: '/kadro', label: 'Kadro' },
   { href: '/calisma-alanlari', label: 'Çalışma Alanları' },
   { href: '/yayinlar', label: 'Yayınlar' },
   { href: '/iletisim', label: 'İletişim' },

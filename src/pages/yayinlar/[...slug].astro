@@ -4,6 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import { getYayinlar, formatDate, readingMinutes, type Yayin } from '../../lib/yayinlar';
 import { calismaAlanlari } from '../../data/calisma-alanlari';
 import { site } from '../../config/site';
+import { avukatBul } from '../../data/kadro';
 
 export async function getStaticPaths() {
   const yayinlar = await getYayinlar();
@@ -17,6 +18,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const alan = calismaAlanlari.find((a) => a.no === entry.data.area);
 const minutes = readingMinutes(entry.body);
+const yazar = avukatBul(entry.data.author);
 
 const schema = {
   '@context': 'https://schema.org',
@@ -26,6 +28,7 @@ const schema = {
   datePublished: entry.data.date.toISOString(),
   inLanguage: 'tr-TR',
   publisher: { '@type': 'Organization', name: site.name },
+  ...(yazar && { author: { '@type': 'Person', name: `Av. ${yazar.ad}`, jobTitle: yazar.unvan } }),
 };
 ---
 
@@ -43,6 +46,16 @@ const schema = {
           </h1>
           <p class="lead mt-6">{entry.data.description}</p>
           <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-3 border-t border-rule pt-6 text-sm text-slate">
+            {
+              yazar && (
+                <div class="flex gap-2">
+                  <dt class="sr-only">Yazar</dt>
+                  <dd>
+                    <a href={`/kadro#${yazar.id}`} class="link">Av. {yazar.ad}</a>, {yazar.unvan}
+                  </dd>
+                </div>
+              )
+            }
             <div class="flex gap-2">
               <dt class="sr-only">Yayın tarihi</dt>
               <dd><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></dd>

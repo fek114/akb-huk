@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
 import binaCephe from '../assets/images/bina-cephe.jpg';
+import { kurucu } from '../data/kadro';
 
 const ilkeler = [
   {
@@ -77,6 +78,31 @@ const ilkeler = [
             <dd class="mt-2 font-serif text-4xl tracking-(--tracking-display)">06</dd>
           </div>
         </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kurucu notu — TASLAK: metin kurucu avukat tarafından onaylanmalıdır -->
+  <section class="border-b border-rule" aria-labelledby="kurucu-notu">
+    <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
+      <h2 id="kurucu-notu" class="h2 md:col-span-4">Kurucumuzdan</h2>
+      <div class="md:col-span-7 md:col-start-6">
+        <div class="space-y-6 font-serif text-[1.375rem] leading-[1.6] md:text-[1.5rem]">
+          <p>
+            Büroyu 1996'da kurarken amacım, Bursa'nın üretim ve ticaret hayatında yer alan işletmelere yalnızca sorun
+            çıktığında değil, karar alma anında da yanlarında olan bir hukuk desteği sunmaktı.
+          </p>
+          <p>
+            Otuz yıl içinde müvekkillerimizin çoğuyla ilişkimiz bir dosyadan ibaret kalmadı; şirketlerin kuruluşunu,
+            büyümesini ve kuşak değişimini birlikte gördük. Bugün de aynı ilkeyle çalışıyoruz: Durumu açıkça
+            anlatmak, riskleri önceden konuşmak ve verdiğimiz her görüşün arkasında durmak.
+          </p>
+        </div>
+        <div class="mt-10 border-t border-rule pt-6">
+          <p class="font-serif text-xl">Av. {kurucu.ad}</p>
+          <p class="mt-1 text-sm text-slate">{kurucu.unvan}, {kurucu.baro}</p>
+          <a href={`/kadro#${kurucu.id}`} class="link mt-4 inline-block text-sm">Kadromuzu inceleyin</a>
+        </div>
       </div>
     </div>
   </section>

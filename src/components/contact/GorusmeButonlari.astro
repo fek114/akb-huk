@@ -1,0 +1,44 @@
+---
+/**
+ * Görüşme talebi düğmeleri: WhatsApp (açıksa), telefon, e-posta.
+ * `tone="dark"` lacivert zemin üzerinde kullanılır.
+ */
+import { site } from '../../config/site';
+import { contactChannels, waHref, mailHref } from '../../config/contact';
+
+interface Props {
+  tone?: 'light' | 'dark';
+}
+const { tone = 'light' } = Astro.props;
+const wa = contactChannels.whatsapp;
+const waOn = wa.enabled && wa.number;
+
+const primary =
+  tone === 'dark'
+    ? 'bg-bone text-navy hover:bg-paper'
+    : 'bg-navy text-bone hover:bg-ink';
+const secondary =
+  tone === 'dark'
+    ? 'border border-bone/40 text-bone hover:border-bone'
+    : 'border border-ink/30 text-ink hover:border-ink';
+const base = 'inline-flex items-center justify-center px-6 py-4 text-sm font-medium transition-colors duration-150';
+---
+
+<div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+  {
+    waOn && (
+      <a
+        href={waHref(wa.number, wa.defaultText)}
+        target="_blank"
+        rel="noopener noreferrer"
+        class:list={[base, primary]}
+      >
+        WhatsApp ile yazın
+      </a>
+    )
+  }
+  <a href={site.phone.href} class:list={[base, waOn ? secondary : primary]}>
+    Telefonla ulaşın
+  </a>
+  <a href={mailHref} class:list={[base, secondary]}>E-posta gönderin</a>
+</div>
