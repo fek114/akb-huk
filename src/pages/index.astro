@@ -4,14 +4,18 @@ import PracticeIndex from '../components/PracticeIndex.astro';
 import YayinList from '../components/YayinList.astro';
 import { site } from '../config/site';
 import { getYayinlar } from '../lib/yayinlar';
+import Photo from '../components/Photo.astro';
+import GorusmeSureci from '../components/GorusmeSureci.astro';
+import bursaUludag from '../assets/images/bursa-uludag.jpg';
+import betonCephe from '../assets/images/beton-cephe.jpg';
 
 const sonYayinlar = (await getYayinlar()).slice(0, 3);
 ---
 
 <Layout>
   <!-- Giriş -->
-  <section class="border-b border-rule">
-    <div class="wrap grid grid-cols-1 gap-10 pt-20 pb-24 md:grid-cols-12 md:pt-32 md:pb-32">
+  <section>
+    <div class="wrap grid grid-cols-1 gap-10 pt-20 pb-16 md:grid-cols-12 md:pt-32 md:pb-24">
       <p class="label md:col-span-12">Bursa · 1996'dan Bugüne</p>
       <h1 class="display md:col-span-10">
         Otuz Yıllık Kurumsal Hafıza, Öngörülebilir Hukuki Çözümler.
@@ -22,14 +26,59 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
         hukuki danışmanlık ve temsil hizmeti sunmaktadır.
       </p>
     </div>
+
+    <!-- Editoryal manşet fotoğrafı: Bursa ve Uludağ -->
+    <div class="wrap pb-24 md:pb-32">
+      <Photo
+        src={bursaUludag}
+        alt="Bursa kent merkezi ve arka planda bulutların altında Uludağ"
+        caption="Bursa · Uludağ eteklerinden kente bakış"
+        aspect="aspect-[4/3] md:aspect-[21/9]"
+        position="40% 62%"
+        sizes="(min-width: 1360px) 1264px, 100vw"
+        priority
+      />
+    </div>
+  </section>
+
+  <!-- Kimler için -->
+  <section class="border-t border-rule" aria-labelledby="kimler">
+    <div class="wrap grid grid-cols-1 gap-10 py-20 md:grid-cols-12 md:py-24">
+      <h2 id="kimler" class="h2 md:col-span-4">Kimlerle çalışıyoruz</h2>
+      <div class="md:col-span-7 md:col-start-6">
+        <ul class="grid grid-cols-1 border-t border-rule sm:grid-cols-2">
+          {
+            [
+              'Sanayi ve üretim işletmeleri',
+              'Ticaret ve hizmet şirketleri',
+              'İşverenler ve insan kaynakları birimleri',
+              'Aile şirketleri ve şirket ortakları',
+            ].map((item) => (
+              <li class="border-b border-rule py-4 text-lg sm:odd:pr-6">{item}</li>
+            ))
+          }
+        </ul>
+        <p class="mt-8 max-w-xl text-slate">
+          Sözleşme hazırlığından iş hukukuna, şirket işlemlerinden ticari uyuşmazlıklara kadar işletmelerin günlük
+          hukuki ihtiyaçlarına danışmanlık veriyor, gerektiğinde mahkeme ve tahkimde temsil ediyoruz. Başvurunuzun
+          çalışma alanlarımız kapsamında olup olmadığını ön bilgi aşamasında açıkça belirtiriz.
+        </p>
+      </div>
+    </div>
   </section>
 
   <!-- Kurumsal Yaklaşım Bandı -->
   <section class="border-b border-rule bg-paper" aria-labelledby="yaklasim">
     <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
       <div class="md:col-span-4">
-        <p class="label">Kurumsal Yaklaşım</p>
-        <h2 id="yaklasim" class="h2 mt-6">Önleyici hukuk, sürekli danışmanlık.</h2>
+        <h2 id="yaklasim" class="h2">Önleyici hukuk, sürekli danışmanlık.</h2>
+        <Photo
+          src={betonCephe}
+          alt="Tekrarlayan modüler beton cephe dokusu"
+          aspect="aspect-[4/5]"
+          sizes="(min-width: 768px) 30vw, 100vw"
+          class="mt-12 hidden md:block"
+        />
       </div>
       <div class="space-y-6 text-lg leading-relaxed text-ink md:col-span-7 md:col-start-6">
         <p>
@@ -43,7 +92,7 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
           işletmenin ticari gerçekliğiyle uyumlu olmasını sağlar.
         </p>
         <div class="pt-4">
-          <a href="/hakkimizda" class="link-arrow">Büromuz hakkında <span aria-hidden="true">→</span></a>
+          <a href="/hakkimizda" class="link-arrow">Büromuz hakkında</a>
         </div>
       </div>
     </div>
@@ -53,8 +102,7 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
   <section aria-labelledby="alanlar">
     <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
       <div class="md:col-span-3">
-        <p class="label">Çalışma Alanları</p>
-        <h2 id="alanlar" class="sr-only">Çalışma Alanları</h2>
+        <h2 id="alanlar" class="h2">Çalışma alanları</h2>
       </div>
       <div class="md:col-span-9">
         <PracticeIndex />
@@ -68,22 +116,28 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
       <section class="border-t border-rule bg-paper" aria-labelledby="yayinlar">
         <div class="wrap py-24 md:py-32">
           <div class="mb-12 flex items-end justify-between gap-6">
-            <div>
-              <p class="label">Yayınlar</p>
-              <h2 id="yayinlar" class="h2 mt-6">Hukuki bültenler ve değerlendirmeler</h2>
-            </div>
-            <a href="/yayinlar" class="link-arrow hidden md:inline-flex">
-              Tüm yayınlar <span aria-hidden="true">→</span>
+            <h2 id="yayinlar" class="h2">Hukuki bültenler ve değerlendirmeler</h2>
+            <a href="/yayinlar" class="link-arrow hidden shrink-0 md:inline-flex">
+              Tüm yayınlar
             </a>
           </div>
           <YayinList items={sonYayinlar} />
           <a href="/yayinlar" class="link-arrow mt-10 md:hidden">
-            Tüm yayınlar <span aria-hidden="true">→</span>
+            Tüm yayınlar
           </a>
         </div>
       </section>
     )
   }
+
+  <!-- İlk görüşme süreci -->
+  <div class="border-t border-rule">
+    <div class="wrap grid grid-cols-1 py-24 md:grid-cols-12 md:py-32">
+      <div class="md:col-span-8 md:col-start-5">
+        <GorusmeSureci />
+      </div>
+    </div>
+  </div>
 
   <!-- İletişim şeridi -->
   <section class="border-t border-rule bg-navy text-bone">

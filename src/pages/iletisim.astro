@@ -3,9 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import ContactBlock from '../components/contact/ContactBlock.astro';
 import ContactChannels from '../components/contact/ContactChannels.astro';
+import GorusmeSureci from '../components/GorusmeSureci.astro';
 ---
 
-<Layout title="İletişim" description="Akbulut Hukuk Bürosu iletişim bilgileri, adres ve çalışma saatleri.">
+<Layout title="İletişim" description="Akbulut Hukuk Bürosu iletişim bilgileri, adres, çalışma saatleri ve ilk görüşme süreci.">
   <PageHeader label="İletişim" title="Büromuz" />
 
   <section class="wrap grid grid-cols-1 gap-16 py-20 md:grid-cols-12 md:py-28">
@@ -16,17 +17,23 @@ import ContactChannels from '../components/contact/ContactChannels.astro';
       </div>
     </div>
 
-    <aside class="text-slate md:col-span-4 md:col-start-9">
-      <p class="label">Görüşme</p>
-      <p class="mt-6">
-        Görüşmeler randevu ile yapılmaktadır. Randevu talebinizi telefon veya e-posta yoluyla iletebilirsiniz.
+    <aside class="text-sm text-slate md:col-span-4 md:col-start-9">
+      <p>
+        Görüşmeler randevu ile yapılmaktadır. İlk iletişimde belge veya ayrıntılı bilgi göndermemenizi rica ederiz;
+        gerekli belgeler randevu aşamasında birlikte belirlenir.
       </p>
-      <p class="mt-6 border-t border-rule pt-6 text-sm">
-        E-posta ile ilettiğiniz bilgiler, avukat-müvekkil ilişkisi kurulmadan önce gizlilik kapsamında
-        değerlendirilmekle birlikte, bu aşamada belge veya ayrıntılı bilgi göndermemenizi rica ederiz.
+      <p class="mt-6 border-t border-rule pt-6">
         Kişisel verilerinizin işlenmesine ilişkin bilgi için
         <a href="/kvkk" class="link">KVKK Aydınlatma Metni</a>'ni inceleyebilirsiniz.
       </p>
     </aside>
   </section>
+
+  <div class="border-t border-rule bg-paper">
+    <div class="wrap grid grid-cols-1 py-24 md:grid-cols-12 md:py-28">
+      <div class="md:col-span-8 md:col-start-5">
+        <GorusmeSureci />
+      </div>
+    </div>
+  </div>
 </Layout>

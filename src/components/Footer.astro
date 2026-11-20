@@ -9,7 +9,7 @@ const year = new Date().getFullYear();
   <div class="wrap grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-8">
     <div class="md:col-span-4">
       <p class="font-serif text-3xl leading-tight tracking-(--tracking-display)">{site.name}</p>
-      <p class="label mt-4">Bursa · {site.founded}</p>
+      <p class="mt-4 text-sm text-slate">{site.founded} yılından bu yana Bursa'da</p>
     </div>
 
     <div class="md:col-span-5 md:col-start-6">
@@ -17,7 +17,6 @@ const year = new Date().getFullYear();
     </div>
 
     <nav aria-label="Alt menü" class="md:col-span-2 md:col-start-11">
-      <p class="label mb-5 text-slate">Sayfalar</p>
       <ul class="space-y-3 text-sm">
         {nav.map((item) => (
           <li><a href={item.href} class="text-slate transition-colors hover:text-ink">{item.label}</a></li>

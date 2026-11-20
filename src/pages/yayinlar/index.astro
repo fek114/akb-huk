@@ -3,6 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import YayinList from '../../components/YayinList.astro';
 import { getYayinlar } from '../../lib/yayinlar';
+import Photo from '../../components/Photo.astro';
+import kitaplik from '../../assets/images/kitaplik.jpg';
 
 const yayinlar = await getYayinlar();
 ---
@@ -16,6 +18,15 @@ const yayinlar = await getYayinlar();
     title="Hukuki Bültenler ve Değerlendirmeler"
     lead="Mevzuat ve yargı uygulamasındaki gelişmelere ilişkin genel bilgilendirme amaçlı değerlendirmelerimiz."
   />
+  <div class="wrap pt-16 md:pt-20">
+    <Photo
+      src={kitaplik}
+      alt="Camlı dolapta sıralanmış ciltli kitaplar"
+      aspect="aspect-[16/9] md:aspect-[16/5]"
+      position="50% 45%"
+      sizes="(min-width: 1360px) 1264px, 100vw"
+    />
+  </div>
   <section class="wrap py-20 md:py-28">
     <YayinList items={yayinlar} />
   </section>

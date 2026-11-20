@@ -12,8 +12,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       <span class="label hidden text-[0.6875rem] text-slate sm:inline">Hukuk Bürosu</span>
     </a>
 
-    <nav aria-label="Ana menü" class="hidden md:block">
-      <ul class="flex items-center gap-10">
+    <nav aria-label="Ana menü" class="hidden items-center gap-10 md:flex">
+      <ul class="flex items-center gap-8 lg:gap-10">
         {
           nav.map((item) => (
             <li>
@@ -33,6 +33,13 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
           ))
         }
       </ul>
+      <a
+        href={site.phone.href}
+        class="border-l border-rule pl-8 text-sm text-navy tabular-nums transition-colors duration-150 hover:text-ink lg:pl-10"
+        aria-label={`Büroyu arayın: ${site.phone.display}`}
+      >
+        {site.phone.display}
+      </a>
     </nav>
 
     <button
@@ -53,6 +60,12 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     data-menu
   >
     <ul class="wrap py-4">
+      <li class="border-b border-rule">
+        <a href={site.phone.href} class="flex items-baseline justify-between gap-4 py-4">
+          <span class="text-sm text-slate">Telefon</span>
+          <span class="text-lg text-navy tabular-nums">{site.phone.display}</span>
+        </a>
+      </li>
       {
         nav.map((item) => (
           <li class="border-b border-rule last:border-b-0">

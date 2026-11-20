@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import binaCephe from '../assets/images/bina-cephe.jpg';
 
 const ilkeler = [
   {
@@ -32,8 +34,15 @@ const ilkeler = [
     <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
       <div class="md:col-span-4">
         <div class="md:sticky md:top-32">
-          <p class="label">Tarihçe</p>
-          <h2 class="h2 mt-6">1996'dan Bugüne Akbulut Hukuk</h2>
+          <h2 class="h2">1996'dan Bugüne Akbulut Hukuk</h2>
+          <Photo
+            src={binaCephe}
+            alt="Gökyüzüne karşı yükselen beton bina cephesi, siyah-beyaz"
+            aspect="aspect-[4/5]"
+            position="30% 40%"
+            sizes="(min-width: 768px) 30vw, 100vw"
+            class="mt-12"
+          />
         </div>
       </div>
       <div class="space-y-6 text-lg leading-relaxed md:col-span-7 md:col-start-6">
@@ -77,8 +86,7 @@ const ilkeler = [
     <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
       <div class="md:col-span-4">
         <div class="md:sticky md:top-32">
-          <p class="label">Metodoloji</p>
-          <h2 class="h2 mt-6">Çalışma Metodolojimiz</h2>
+          <h2 class="h2">Çalışma Metodolojimiz</h2>
         </div>
       </div>
       <ol class="border-t border-ink md:col-span-7 md:col-start-6">
