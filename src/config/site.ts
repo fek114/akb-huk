@@ -44,8 +44,10 @@ export const nav = [
   { href: '/hakkimizda', label: 'Hakkımızda' },
   { href: '/kadro', label: 'Kadro' },
   { href: '/calisma-alanlari', label: 'Çalışma Alanları' },
-  { href: '/yayinlar', label: 'Yayınlar' },
   { href: '/iletisim', label: 'İletişim' },
 ] as const;
+
+/** Alt menü: ana menü + yalnızca footer'da görünen sayfalar */
+export const footerNav = [...nav, { href: '/yayinlar', label: 'Yayınlar' }] as const;
 
 export const yearsOfPractice = new Date().getFullYear() - site.founded;

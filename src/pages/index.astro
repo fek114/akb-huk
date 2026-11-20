@@ -1,16 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PracticeIndex from '../components/PracticeIndex.astro';
-import YayinList from '../components/YayinList.astro';
 import { site } from '../config/site';
-import { getYayinlar } from '../lib/yayinlar';
 import Photo from '../components/Photo.astro';
 import GorusmeSureci from '../components/GorusmeSureci.astro';
 import GorusmeButonlari from '../components/contact/GorusmeButonlari.astro';
 import bursaUludag from '../assets/images/bursa-uludag.jpg';
 import betonCephe from '../assets/images/beton-cephe.jpg';
-
-const sonYayinlar = (await getYayinlar()).slice(0, 3);
 ---
 
 <Layout>
@@ -110,26 +106,6 @@ const sonYayinlar = (await getYayinlar()).slice(0, 3);
       </div>
     </div>
   </section>
-
-  <!-- Yayınlar -->
-  {
-    sonYayinlar.length > 0 && (
-      <section class="border-t border-rule bg-paper" aria-labelledby="yayinlar">
-        <div class="wrap py-24 md:py-32">
-          <div class="mb-12 flex items-end justify-between gap-6">
-            <h2 id="yayinlar" class="h2">Hukuki bültenler ve değerlendirmeler</h2>
-            <a href="/yayinlar" class="link-arrow hidden shrink-0 md:inline-flex">
-              Tüm yayınlar
-            </a>
-          </div>
-          <YayinList items={sonYayinlar} />
-          <a href="/yayinlar" class="link-arrow mt-10 md:hidden">
-            Tüm yayınlar
-          </a>
-        </div>
-      </section>
-    )
-  }
 
   <!-- İlk görüşme süreci -->
   <div class="border-t border-rule">

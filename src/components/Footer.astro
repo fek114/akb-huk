@@ -1,5 +1,5 @@
 ---
-import { nav, site } from '../config/site';
+import { footerNav, site } from '../config/site';
 import ContactBlock from './contact/ContactBlock.astro';
 
 const year = new Date().getFullYear();
@@ -18,7 +18,7 @@ const year = new Date().getFullYear();
 
     <nav aria-label="Alt menü" class="md:col-span-2 md:col-start-11">
       <ul class="space-y-3 text-sm">
-        {nav.map((item) => (
+        {footerNav.map((item) => (
           <li><a href={item.href} class="text-slate transition-colors hover:text-ink">{item.label}</a></li>
         ))}
       </ul>
