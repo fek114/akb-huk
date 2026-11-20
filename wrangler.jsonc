@@ -1,0 +1,13 @@
+{
+  // Cloudflare Workers — statik site (Astro `dist/` çıktısı)
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "akbulut-hukuk",
+  "compatibility_date": "2026-11-18",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // Ziyaretçi verisi toplanmaz; analiz için Cloudflare Web Analytics (çerezsiz) kullanılacak.
+  "observability": { "enabled": false }
+}
