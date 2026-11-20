@@ -23,12 +23,12 @@ export const site = {
       'https://www.openstreetmap.org/search?query=Odunluk%20Mahallesi%20Akademi%20Caddesi%2014%20Nil%C3%BCfer%20Bursa',
   },
 
-  // YER TUTUCU — yayına almadan önce gerçek numara ile değiştirilmelidir.
+  // GEÇİCİ numara — büronun sabit hattı ve WhatsApp Business hattı netleşince güncellenmelidir.
   phone: {
-    display: '+90 (224) 000 00 00',
-    href: 'tel:+902240000000',
-    /** WhatsApp Business hattı — ülke koduyla, boşluksuz. YER TUTUCU. */
-    whatsapp: '902240000000',
+    display: '+90 (537) 565 26 70',
+    href: 'tel:+905375652670',
+    /** WhatsApp hattı — ülke koduyla, boşluksuz. */
+    whatsapp: '905375652670',
   },
 
   email: 'info@akbuluthukuk.av.tr',
