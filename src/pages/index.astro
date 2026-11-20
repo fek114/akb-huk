@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PracticeIndex from '../components/PracticeIndex.astro';
+import YayinList from '../components/YayinList.astro';
+import { site } from '../config/site';
+import { getYayinlar } from '../lib/yayinlar';
+
+const sonYayinlar = (await getYayinlar()).slice(0, 3);
+---
+
+<Layout>
+  <!-- Giriş -->
+  <section class="border-b border-rule">
+    <div class="wrap grid grid-cols-1 gap-10 pt-20 pb-24 md:grid-cols-12 md:pt-32 md:pb-32">
+      <p class="label md:col-span-12">Bursa · 1996'dan Bugüne</p>
+      <h1 class="display md:col-span-10">
+        Otuz Yıllık Kurumsal Hafıza, Öngörülebilir Hukuki Çözümler.
+      </h1>
+      <p class="lead md:col-span-6 md:col-start-6">
+        Akbulut Hukuk Bürosu; Bursa ve Türkiye genelinde faaliyet gösteren yerli ve uluslararası şirketlere,
+        kurumsal yönetim, ticari sözleşmeler ve uyuşmazlık çözümü alanlarında otuz yılı aşkın mesleki birikimle
+        hukuki danışmanlık ve temsil hizmeti sunmaktadır.
+      </p>
+    </div>
+  </section>
+
+  <!-- Kurumsal Yaklaşım Bandı -->
+  <section class="border-b border-rule bg-paper" aria-labelledby="yaklasim">
+    <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
+      <div class="md:col-span-4">
+        <p class="label">Kurumsal Yaklaşım</p>
+        <h2 id="yaklasim" class="h2 mt-6">Önleyici hukuk, sürekli danışmanlık.</h2>
+      </div>
+      <div class="space-y-6 text-lg leading-relaxed text-ink md:col-span-7 md:col-start-6">
+        <p>
+          1996 yılında Bursa'da kurulan büromuz, kentin sanayi, üretim, ticaret ve hizmet sektörlerinde faaliyet
+          gösteren müvekkillerine uzun soluklu bir çalışma ilişkisi içinde hizmet vermektedir.
+        </p>
+        <p class="text-slate">
+          Çalışmalarımızın merkezinde önleyici hukuk prensibi yer alır: Uyuşmazlık doğduktan sonra müdahale etmek
+          yerine, sözleşme ve kurumsal süreçleri baştan sağlam kurarak hukuki riskleri öngörmek ve yönetmek.
+          Müvekkillerimizin faaliyetlerini yakından tanıyan sürekli danışmanlık modeli, hukuki değerlendirmelerin
+          işletmenin ticari gerçekliğiyle uyumlu olmasını sağlar.
+        </p>
+        <div class="pt-4">
+          <a href="/hakkimizda" class="link-arrow">Büromuz hakkında <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Çalışma Alanları Dizini -->
+  <section aria-labelledby="alanlar">
+    <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
+      <div class="md:col-span-3">
+        <p class="label">Çalışma Alanları</p>
+        <h2 id="alanlar" class="sr-only">Çalışma Alanları</h2>
+      </div>
+      <div class="md:col-span-9">
+        <PracticeIndex />
+      </div>
+    </div>
+  </section>
+
+  <!-- Yayınlar -->
+  {
+    sonYayinlar.length > 0 && (
+      <section class="border-t border-rule bg-paper" aria-labelledby="yayinlar">
+        <div class="wrap py-24 md:py-32">
+          <div class="mb-12 flex items-end justify-between gap-6">
+            <div>
+              <p class="label">Yayınlar</p>
+              <h2 id="yayinlar" class="h2 mt-6">Hukuki bültenler ve değerlendirmeler</h2>
+            </div>
+            <a href="/yayinlar" class="link-arrow hidden md:inline-flex">
+              Tüm yayınlar <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <YayinList items={sonYayinlar} />
+          <a href="/yayinlar" class="link-arrow mt-10 md:hidden">
+            Tüm yayınlar <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- İletişim şeridi -->
+  <section class="border-t border-rule bg-navy text-bone">
+    <div class="wrap grid grid-cols-1 gap-8 py-20 md:grid-cols-12 md:items-end">
+      <div class="md:col-span-7">
+        <p class="label text-bone/60">İletişim</p>
+        <p class="mt-6 font-serif text-3xl leading-tight tracking-(--tracking-display) text-bone md:text-4xl">
+          {site.address.full}
+        </p>
+      </div>
+      <div class="space-y-2 text-sm md:col-span-4 md:col-start-9 md:text-right">
+        <p><a href={site.phone.href} class="hover:text-bone/70">{site.phone.display}</a></p>
+        <p><a href={`mailto:${site.email}`} class="hover:text-bone/70">{site.email}</a></p>
+        <p class="text-bone/60">{site.hours.display}</p>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,22 @@
+---
+/**
+ * Modüler iletişim/randevu kanalları.
+ * `src/config/contact.ts` içinde hiçbir kanal açık değilse hiçbir şey render edilmez.
+ */
+import { contactChannels } from '../../config/contact';
+import WhatsAppLink from './WhatsAppLink.astro';
+import CalEmbed from './CalEmbed.astro';
+
+const { whatsapp, calcom } = contactChannels;
+const anyEnabled = (whatsapp.enabled && whatsapp.number) || (calcom.enabled && calcom.calLink);
+---
+
+{
+  anyEnabled && (
+    <section class="border-t border-rule pt-10" aria-labelledby="kanallar-baslik">
+      <h2 id="kanallar-baslik" class="label mb-6">Görüşme Talebi</h2>
+      {whatsapp.enabled && whatsapp.number && <WhatsAppLink />}
+      {calcom.enabled && calcom.calLink && <CalEmbed />}
+    </section>
+  )
+}

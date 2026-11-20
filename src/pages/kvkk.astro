@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site } from '../config/site';
+
+// TASLAK — Bu metin büro tarafından gözden geçirilip onaylanmadan yayına alınmamalıdır.
+// WhatsApp, Cal.com veya ön bilgilendirme asistanı etkinleştirildiğinde ilgili bölümler eklenmelidir.
+---
+
+<Layout title="KVKK Aydınlatma Metni" description="6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında aydınlatma metni.">
+  <PageHeader label="Kişisel Veriler" title="KVKK Aydınlatma Metni" />
+
+  <section class="wrap grid grid-cols-1 py-20 md:grid-cols-12 md:py-28">
+    <div class="prose-legal md:col-span-8 md:col-start-5">
+      <p>
+        {site.name} ("Büro") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca veri sorumlusu
+        sıfatıyla, kişisel verilerinizi aşağıda açıklanan kapsamda işlemekteyiz.
+      </p>
+
+      <h2>1. Veri Sorumlusu</h2>
+      <p>
+        {site.name}<br />
+        {site.address.full}<br />
+        E-posta: <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+
+      <h2>2. İşlenen Kişisel Veriler</h2>
+      <p>
+        Büromuzla telefon veya e-posta yoluyla iletişime geçmeniz hâlinde; ad-soyad, iletişim bilgileri (telefon
+        numarası, e-posta adresi) ve tarafımıza ilettiğiniz yazışma içerikleri işlenmektedir.
+      </p>
+      <p>
+        İnternet sitemiz çerez kullanmamaktadır. Site trafiğine ilişkin istatistikler, kişisel veri içermeyen ve
+        çerez gerektirmeyen bir analiz aracıyla toplu olarak ölçülmektedir.
+      </p>
+
+      <h2>3. İşleme Amaçları</h2>
+      <ul>
+        <li>Görüşme ve randevu taleplerinizin değerlendirilmesi ve yanıtlanması,</li>
+        <li>Avukat-müvekkil ilişkisinin kurulması öncesinde çıkar çatışması kontrolünün yapılması,</li>
+        <li>Avukatlık Kanunu ve ilgili mevzuattan doğan yükümlülüklerin yerine getirilmesi.</li>
+      </ul>
+
+      <h2>4. Hukuki Sebepler</h2>
+      <p>
+        Kişisel verileriniz, KVKK m. 5/2 uyarınca bir sözleşmenin kurulması veya ifasıyla doğrudan ilgili olması,
+        veri sorumlusunun hukuki yükümlülüğünü yerine getirebilmesi ve ilgili kişinin temel hak ve özgürlüklerine
+        zarar vermemek kaydıyla veri sorumlusunun meşru menfaati hukuki sebeplerine dayanılarak işlenmektedir.
+      </p>
+
+      <h2>5. Aktarım</h2>
+      <p>
+        Kişisel verileriniz, kanuni yükümlülükler kapsamında yetkili kamu kurum ve kuruluşları ile yargı mercileri
+        dışında üçüncü kişilere aktarılmamaktadır. E-posta hizmeti sağlayıcısına ilişkin aktarım bilgisi büro
+        tarafından tamamlanacaktır.
+      </p>
+
+      <h2>6. Haklarınız</h2>
+      <p>
+        KVKK m. 11 uyarınca; kişisel verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi
+        talep etme, işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme, eksik veya yanlış
+        işlenmişse düzeltilmesini, kanuni şartlar çerçevesinde silinmesini veya yok edilmesini isteme ve
+        kanuna aykırı işleme sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme haklarına
+        sahipsiniz.
+      </p>
+      <p>
+        Başvurularınızı yukarıdaki adrese yazılı olarak veya <a href={`mailto:${site.email}`}>{site.email}</a>
+        adresine iletebilirsiniz. Başvurular en geç otuz gün içinde sonuçlandırılır.
+      </p>
+    </div>
+  </section>
+</Layout>

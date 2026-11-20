@@ -1,0 +1,18 @@
+---
+interface Props {
+  label: string;
+  title: string;
+  lead?: string;
+}
+const { label, title, lead } = Astro.props;
+---
+
+<section class="border-b border-rule">
+  <div class="wrap grid grid-cols-1 gap-8 pt-20 pb-16 md:grid-cols-12 md:pt-28 md:pb-24">
+    <p class="label md:col-span-3">{label}</p>
+    <div class="md:col-span-8 md:col-start-5">
+      <h1 class="display">{title}</h1>
+      {lead && <p class="lead mt-8 max-w-2xl">{lead}</p>}
+    </div>
+  </div>
+</section>

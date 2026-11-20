@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const ilkeler = [
+  {
+    no: 'I',
+    title: 'Önleyici Hukuk Yaklaşımı',
+    text: 'Hukuki riskleri uyuşmazlık aşamasına gelmeden tespit etmeyi esas alırız. Sözleşme yapısı, kurumsal karar süreçleri ve mevzuat değişiklikleri düzenli olarak gözden geçirilir; böylece müvekkillerimiz kararlarını öngörülebilir bir hukuki zemin üzerinde verir.',
+  },
+  {
+    no: 'II',
+    title: 'Sektörel Uyum ve Netlik',
+    text: 'Hukuki değerlendirmelerimizi, müvekkilimizin faaliyet gösterdiği sektörün işleyişi ve ticari teamülleriyle birlikte ele alırız. Görüşlerimizi teknik terimlere boğmadan, yönetim kademesinin karar almasına elverişli açıklıkta sunarız.',
+  },
+  {
+    no: 'III',
+    title: 'Şeffaf Süreç Takibi',
+    text: 'Her dosyada iş planı, sorumlu avukat ve süreç adımları baştan belirlenir. Müvekkillerimiz dosyalarının güncel durumu, beklenen aşamalar ve maliyet kalemleri hakkında düzenli ve yazılı olarak bilgilendirilir.',
+  },
+];
+---
+
+<Layout
+  title="Hakkımızda"
+  description="1996'da Bursa'da kurulan Akbulut Hukuk Bürosu'nun kurumsal geçmişi ve çalışma metodolojisi."
+>
+  <PageHeader label="Hakkımızda" title="Kurumsal Deneyim ve Çalışma İlkeleri" />
+
+  <!-- 1996'dan Bugüne -->
+  <section class="border-b border-rule">
+    <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
+      <div class="md:col-span-4">
+        <div class="md:sticky md:top-32">
+          <p class="label">Tarihçe</p>
+          <h2 class="h2 mt-6">1996'dan Bugüne Akbulut Hukuk</h2>
+        </div>
+      </div>
+      <div class="space-y-6 text-lg leading-relaxed md:col-span-7 md:col-start-6">
+        <p>
+          Akbulut Hukuk Bürosu, 1996 yılında Bursa'da kurulmuştur. Kuruluşundan bu yana kentin sanayi ve ticaret
+          hayatıyla birlikte gelişen büro, bugün otomotiv yan sanayi, tekstil, makine, gıda ve inşaat başta olmak
+          üzere farklı sektörlerde faaliyet gösteren şirketlere hukuki danışmanlık ve temsil hizmeti sunmaktadır.
+        </p>
+        <p class="text-slate">
+          Bursa, Türkiye'nin üretim ve ihracat kapasitesi en yüksek kentlerinden biridir. Organize sanayi
+          bölgelerinde faaliyet gösteren üreticiler, tedarik zincirinin farklı halkalarında yer alan yan sanayi
+          firmaları ve yurt dışı pazarlara açılan ihracatçılar; sözleşme, iş hukuku, gümrük ve uluslararası
+          ticaret kurallarının kesiştiği karmaşık bir hukuki çerçevede çalışır.
+        </p>
+        <p class="text-slate">
+          Otuz yıllık çalışma süremiz boyunca bu yapının içinden edindiğimiz bilgi birikimi, müvekkillerimizin
+          ihtiyaçlarını sektörün kendi dinamikleri içinde değerlendirmemize olanak tanır. Kurumsal hafızamız, aynı
+          müvekkille yıllar boyunca sürdürülen çalışma ilişkilerine dayanır.
+        </p>
+
+        <dl class="mt-12 grid grid-cols-2 border-t border-rule md:grid-cols-3">
+          <div class="border-b border-rule py-6 pr-6">
+            <dt class="label text-slate">Kuruluş</dt>
+            <dd class="mt-2 font-serif text-4xl tracking-(--tracking-display)">1996</dd>
+          </div>
+          <div class="border-b border-rule py-6 pr-6">
+            <dt class="label text-slate">Merkez</dt>
+            <dd class="mt-2 font-serif text-4xl tracking-(--tracking-display)">Bursa</dd>
+          </div>
+          <div class="col-span-2 border-b border-rule py-6 md:col-span-1">
+            <dt class="label text-slate">Çalışma Alanı</dt>
+            <dd class="mt-2 font-serif text-4xl tracking-(--tracking-display)">06</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metodoloji -->
+  <section class="bg-paper">
+    <div class="wrap grid grid-cols-1 gap-10 py-24 md:grid-cols-12 md:py-32">
+      <div class="md:col-span-4">
+        <div class="md:sticky md:top-32">
+          <p class="label">Metodoloji</p>
+          <h2 class="h2 mt-6">Çalışma Metodolojimiz</h2>
+        </div>
+      </div>
+      <ol class="border-t border-ink md:col-span-7 md:col-start-6">
+        {
+          ilkeler.map((ilke) => (
+            <li class="grid grid-cols-[3rem_1fr] gap-4 border-b border-rule py-10">
+              <span class="font-serif text-lg text-bronze">{ilke.no}</span>
+              <div>
+                <h3 class="font-serif text-[1.625rem] leading-snug">{ilke.title}</h3>
+                <p class="mt-4 text-slate">{ilke.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</Layout>

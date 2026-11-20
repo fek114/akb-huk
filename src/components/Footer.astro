@@ -1,0 +1,38 @@
+---
+import { nav, site } from '../config/site';
+import ContactBlock from './contact/ContactBlock.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-rule bg-paper">
+  <div class="wrap grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:gap-8">
+    <div class="md:col-span-4">
+      <p class="font-serif text-3xl leading-tight tracking-(--tracking-display)">{site.name}</p>
+      <p class="label mt-4">Bursa · {site.founded}</p>
+    </div>
+
+    <div class="md:col-span-5 md:col-start-6">
+      <ContactBlock compact />
+    </div>
+
+    <nav aria-label="Alt menü" class="md:col-span-2 md:col-start-11">
+      <p class="label mb-5 text-slate">Sayfalar</p>
+      <ul class="space-y-3 text-sm">
+        {nav.map((item) => (
+          <li><a href={item.href} class="text-slate transition-colors hover:text-ink">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-rule">
+    <div class="wrap flex flex-col gap-3 py-6 text-xs text-slate md:flex-row md:items-center md:justify-between">
+      <p>© {year} {site.name}. Tüm hakları saklıdır.</p>
+      <p class="max-w-2xl md:text-right">
+        Bu internet sitesi, Türkiye Barolar Birliği Meslek Kuralları ve Reklam Yasağı Yönetmeliği uyarınca
+        yalnızca bilgilendirme amacı taşır. <a href="/kvkk" class="link">KVKK Aydınlatma Metni</a>
+      </p>
+    </div>
+  </div>
+</footer>

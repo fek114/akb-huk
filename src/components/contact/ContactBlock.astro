@@ -1,0 +1,47 @@
+---
+import { site } from '../../config/site';
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
+const rows = [
+  { label: 'Adres', value: site.address.full, href: site.address.mapUrl, external: true, linkText: 'Haritada aç' },
+  { label: 'Telefon', value: site.phone.display, href: site.phone.href },
+  { label: 'E-posta', value: site.email, href: `mailto:${site.email}` },
+  { label: 'Çalışma Saatleri', value: site.hours.display },
+];
+---
+
+<dl class:list={['grid', compact ? 'gap-5 text-sm' : 'gap-0']}>
+  {
+    rows.map((row) => (
+      <div
+        class:list={[
+          'grid grid-cols-1 gap-1 sm:grid-cols-[10rem_1fr] sm:gap-6',
+          !compact && 'border-t border-rule py-6 last:border-b',
+        ]}
+      >
+        <dt class="label text-slate">{row.label}</dt>
+        <dd class:list={['text-ink', !compact && 'text-lg']}>
+          {row.href && !row.external ? (
+            <a href={row.href} class="link">{row.value}</a>
+          ) : (
+            <span>{row.value}</span>
+          )}
+          {row.external && !compact && (
+            <a
+              href={row.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-2 block text-sm text-slate underline decoration-rule underline-offset-4 hover:text-ink"
+            >
+              {row.linkText} ↗
+            </a>
+          )}
+        </dd>
+      </div>
+    ))
+  }
+</dl>

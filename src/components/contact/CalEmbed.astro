@@ -1,0 +1,27 @@
+---
+/**
+ * Cal.com satır içi takvim. Betik yalnızca bu bileşen render edildiğinde yüklenir.
+ * Etkinleştirmeden önce KVKK aydınlatma metnine Cal.com veri aktarımı eklenmelidir.
+ */
+import { contactChannels } from '../../config/contact';
+const { calLink } = contactChannels.calcom;
+---
+
+<div id="cal-inline" data-cal-link={calLink} class="min-h-[640px] border border-rule bg-paper"></div>
+
+<script>
+  const el = document.getElementById('cal-inline');
+  const calLink = el?.dataset.calLink;
+  if (el && calLink) {
+    const s = document.createElement('script');
+    s.src = 'https://app.cal.com/embed/embed.js';
+    s.async = true;
+    s.onload = () => {
+      const Cal = (window as any).Cal;
+      Cal?.('init', { origin: 'https://cal.com' });
+      Cal?.('inline', { elementOrSelector: '#cal-inline', calLink, config: { layout: 'month_view' } });
+      Cal?.('ui', { styles: { branding: { brandColor: '#0F1E36' } }, hideEventTypeDetails: false });
+    };
+    document.head.appendChild(s);
+  }
+</script>

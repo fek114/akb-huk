@@ -1,0 +1,16 @@
+---
+/**
+ * Sağ alt köşe ayrılmış alanı.
+ * İleride Cloudflare Workers tabanlı Ön Bilgilendirme Asistanı buraya yerleşecek.
+ * Şu an boştur ve sayfa düzenini etkilemez (pointer-events: none).
+ * Katman: var(--z-floating). Sitedeki başka hiçbir öğe bu köşeye konumlandırılmamalıdır.
+ */
+---
+
+<div
+  id="floating-slot"
+  class="pointer-events-none fixed right-4 bottom-4 z-(--z-floating) md:right-8 md:bottom-8"
+  aria-hidden="true"
+>
+  <slot />
+</div>

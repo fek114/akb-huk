@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { calismaAlanlari } from '../data/calisma-alanlari';
+---
+
+<Layout
+  title="Çalışma Alanları"
+  description="Akbulut Hukuk Bürosu'nun şirketler, sözleşmeler, iş, birleşme ve devralma, gayrimenkul ve uyuşmazlık çözümü alanlarındaki çalışmaları."
+>
+  <PageHeader
+    label="Çalışma Alanları"
+    title="Şirketlerin hukuki ihtiyaçlarına bütüncül yaklaşım."
+    lead="Altı ana çalışma alanında, kurumsal müvekkillerimize hem sürekli danışmanlık hem de dosya bazında temsil hizmeti sunuyoruz."
+  />
+
+  <div class="wrap grid grid-cols-1 gap-10 py-20 md:grid-cols-12 md:py-28">
+    <!-- Sabit indeks -->
+    <nav aria-label="Çalışma alanları dizini" class="hidden md:col-span-4 md:block">
+      <ol class="sticky top-32 border-t border-rule">
+        {
+          calismaAlanlari.map((alan) => (
+            <li class="border-b border-rule">
+              <a
+                href={`#${alan.id}`}
+                data-index-link={alan.id}
+                class="grid grid-cols-[2.5rem_1fr] gap-2 py-3 text-sm text-slate transition-colors duration-150 hover:text-ink data-[active]:text-navy"
+              >
+                <span class="tabular-nums text-bronze">{alan.no}</span>
+                <span>{alan.title}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <!-- Alanlar -->
+    <div class="md:col-span-7 md:col-start-6">
+      {
+        calismaAlanlari.map((alan, i) => (
+          <article
+            id={alan.id}
+            data-area
+            class:list={['scroll-mt-28 py-16 first:pt-0', i < calismaAlanlari.length - 1 && 'border-b border-rule']}
+          >
+            <p class="label tabular-nums">{alan.no}</p>
+            <h2 class="h2 mt-4">{alan.title}</h2>
+            <p class="lead mt-6">{alan.summary}</p>
+            <ul class="mt-10 border-t border-rule">
+              {alan.scope.map((item) => (
+                <li class="grid grid-cols-[1.5rem_1fr] border-b border-rule py-4 text-ink">
+                  <span class="text-bronze" aria-hidden="true">—</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const links = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-index-link]').forEach((a) => links.set(a.dataset.indexLink!, a));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((a) => {
+          a.removeAttribute('data-active');
+          a.removeAttribute('aria-current');
+        });
+        const active = links.get(entry.target.id);
+        active?.setAttribute('data-active', '');
+        active?.setAttribute('aria-current', 'true');
+      });
+    },
+    { rootMargin: '-30% 0px -60% 0px' },
+  );
+  document.querySelectorAll('[data-area]').forEach((el) => observer.observe(el));
+</script>

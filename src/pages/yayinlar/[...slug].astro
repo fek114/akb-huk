@@ -1,0 +1,82 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { getYayinlar, formatDate, readingMinutes, type Yayin } from '../../lib/yayinlar';
+import { calismaAlanlari } from '../../data/calisma-alanlari';
+import { site } from '../../config/site';
+
+export async function getStaticPaths() {
+  const yayinlar = await getYayinlar();
+  return yayinlar.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: Yayin;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const alan = calismaAlanlari.find((a) => a.no === entry.data.area);
+const minutes = readingMinutes(entry.body);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: entry.data.date.toISOString(),
+  inLanguage: 'tr-TR',
+  publisher: { '@type': 'Organization', name: site.name },
+};
+---
+
+<Layout title={entry.data.title} description={entry.data.description} schema={schema} ogType="article">
+  <article>
+    <header class="border-b border-rule">
+      <div class="wrap grid grid-cols-1 gap-8 pt-16 pb-16 md:grid-cols-12 md:pt-24 md:pb-20">
+        <nav class="md:col-span-3" aria-label="Geri">
+          <a href="/yayinlar" class="text-sm text-slate hover:text-ink">← Yayınlar</a>
+        </nav>
+        <div class="md:col-span-8 md:col-start-5">
+          <p class="label">{entry.data.category}</p>
+          <h1 class="mt-6 font-serif text-[clamp(2rem,4vw,3.5rem)] leading-[1.08] tracking-(--tracking-display)">
+            {entry.data.title}
+          </h1>
+          <p class="lead mt-6">{entry.data.description}</p>
+          <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-3 border-t border-rule pt-6 text-sm text-slate">
+            <div class="flex gap-2">
+              <dt class="sr-only">Yayın tarihi</dt>
+              <dd><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time></dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="sr-only">Okuma süresi</dt>
+              <dd>{minutes} dk okuma</dd>
+            </div>
+            {
+              alan && (
+                <div class="flex gap-2">
+                  <dt class="sr-only">Çalışma alanı</dt>
+                  <dd>
+                    <a href={`/calisma-alanlari#${alan.id}`} class="link">
+                      {alan.title}
+                    </a>
+                  </dd>
+                </div>
+              )
+            }
+          </dl>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap grid grid-cols-1 py-16 md:grid-cols-12 md:py-24">
+      <div class="prose-legal md:col-span-8 md:col-start-5">
+        <Content />
+      </div>
+      <aside class="mt-16 border-t border-rule pt-6 text-sm text-slate md:col-span-8 md:col-start-5">
+        Bu yazı genel bilgilendirme amacıyla hazırlanmıştır; hukuki görüş niteliği taşımaz ve somut bir uyuşmazlığa
+        ilişkin değerlendirme yerine geçmez. Yayın tarihinden sonra mevzuat veya yargı uygulamasında değişiklik
+        olmuş olabilir.
+      </aside>
+    </div>
+  </article>
+</Layout>

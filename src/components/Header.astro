@@ -1,0 +1,83 @@
+---
+import { nav, site } from '../config/site';
+
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || path.startsWith(href + '/');
+---
+
+<header class="sticky top-0 z-(--z-header) border-b border-rule bg-bone">
+  <div class="wrap flex h-20 items-center justify-between">
+    <a href="/" class="group flex items-baseline gap-3" aria-label={`${site.name} — Ana sayfa`}>
+      <span class="font-serif text-[1.375rem] leading-none tracking-(--tracking-display) text-ink">Akbulut</span>
+      <span class="label hidden text-[0.6875rem] text-slate sm:inline">Hukuk Bürosu</span>
+    </a>
+
+    <nav aria-label="Ana menü" class="hidden md:block">
+      <ul class="flex items-center gap-10">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={[
+                  'border-b pb-1 text-sm transition-colors duration-150',
+                  isActive(item.href)
+                    ? 'border-navy text-ink'
+                    : 'border-transparent text-slate hover:border-rule hover:text-ink',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <button
+      type="button"
+      class="-mr-2 p-2 text-sm text-ink md:hidden"
+      aria-expanded="false"
+      aria-controls="mobil-menu"
+      data-menu-toggle
+    >
+      <span data-menu-label>Menü</span>
+    </button>
+  </div>
+
+  <nav
+    id="mobil-menu"
+    aria-label="Mobil menü"
+    class="hidden border-t border-rule bg-bone md:hidden"
+    data-menu
+  >
+    <ul class="wrap py-4">
+      {
+        nav.map((item) => (
+          <li class="border-b border-rule last:border-b-0">
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class:list={['block py-4 font-serif text-2xl', isActive(item.href) ? 'text-navy' : 'text-ink']}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const label = document.querySelector<HTMLElement>('[data-menu-label]');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    menu?.classList.toggle('hidden', open);
+    if (label) label.textContent = open ? 'Menü' : 'Kapat';
+  });
+</script>

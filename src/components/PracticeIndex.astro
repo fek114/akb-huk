@@ -1,0 +1,27 @@
+---
+import { calismaAlanlari } from '../data/calisma-alanlari';
+---
+
+<ol class="border-t border-ink">
+  {
+    calismaAlanlari.map((alan) => (
+      <li class="border-b border-rule">
+        <a
+          href={`/calisma-alanlari#${alan.id}`}
+          class="group grid grid-cols-[3rem_1fr_auto] items-baseline gap-4 py-7 md:grid-cols-[5rem_1fr_auto] md:py-9"
+        >
+          <span class="font-sans text-sm text-bronze tabular-nums">{alan.no}</span>
+          <span class="font-serif text-[1.5rem] leading-snug tracking-(--tracking-display) text-ink transition-colors duration-150 group-hover:text-navy md:text-[2rem]">
+            {alan.title}
+          </span>
+          <span
+            class="text-slate transition-transform duration-150 group-hover:translate-x-1 group-hover:text-navy"
+            aria-hidden="true"
+          >
+            →
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ol>
